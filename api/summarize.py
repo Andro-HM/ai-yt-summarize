@@ -9,6 +9,7 @@ router = APIRouter()
 class SummaryRequest(BaseModel):
     url: str
     language: str = "en"
+    model: str = "openrouter"  # <-- Add this line; defaults to "openrouter"
 
 @router.post("/api/summarize")
 async def summarize(request: SummaryRequest):
