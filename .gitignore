@@ -63,3 +63,12 @@ Thumbs.db
 .mypy_cache/
 .dmypy.json
 dmypy.json
+
+# Frontend and Database folders (local only)
+frontend/
+db/
+
+# Test files
+test_*.py
+test_*.json
+nul
