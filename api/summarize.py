@@ -2,27 +2,27 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from utils.youtube import extract_video_id
 from services.transcript_service import get_youtube_transcript
-from services.ai_service import get_openrouter_summary
+from services.ai_service import get_openrouter_summary, get_gemini_summary
 
 router = APIRouter()
 
 class SummaryRequest(BaseModel):
     url: str
     language: str = "en"
-    model: str = "openrouter"  # <-- Add this line; defaults to "openrouter"
+    model: str = "openrouter"    # Added for model selection
 
 @router.post("/api/summarize")
 async def summarize(request: SummaryRequest):
     try:
-        # Extract video ID
+        # Extract video ID from url
         video_id = extract_video_id(request.url)
-
-        # Get transcript
+        # Fetch transcript
         transcript_data = get_youtube_transcript(video_id, request.language)
-
-        # Generate summary using OpenRouter
-        summary = get_openrouter_summary(transcript_data["transcript"], request.language)
-
+        # Select model based on request
+        if request.model.lower() == "gemini":
+            summary = get_gemini_summary(transcript_data["transcript"], request.language)
+        else:
+            summary = get_openrouter_summary(transcript_data["transcript"], request.language)
         return {
             "success": True,
             "summary": summary,
